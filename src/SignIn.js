@@ -6,7 +6,6 @@ import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
@@ -14,6 +13,7 @@ import Container from '@material-ui/core/Container';
 import { useFormik } from 'formik';
 import Web3 from 'web3';
 import useStyles from './styles';
+import AuthApi from './AuthApi';
 
 function Copyright() {
   return (
@@ -40,6 +40,8 @@ const validate = values => {
 };
 
 export default function SignIn() {
+  const Auth = React.useContext(AuthApi);
+
   const classes = useStyles();
 
   const formik = useFormik({
@@ -48,7 +50,7 @@ export default function SignIn() {
     },
     validate,
     onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
+      Auth.setAuth(true);
     }
   });
 
