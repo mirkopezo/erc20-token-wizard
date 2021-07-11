@@ -3,8 +3,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -14,6 +12,7 @@ import { useFormik } from 'formik';
 import Web3 from 'web3';
 import useStyles from './styles';
 import AuthApi from './AuthApi';
+import Cookies from 'js-cookie';
 
 function Copyright() {
   return (
@@ -51,6 +50,7 @@ export default function SignIn() {
     validate,
     onSubmit: values => {
       Auth.setAuth(true);
+      Cookies.set("wallet",formik.values.ethaddress);
     }
   });
 
@@ -78,10 +78,6 @@ export default function SignIn() {
             value={formik.values.ethaddress}
             error={formik.errors.ethaddress}
             helperText={formik.errors.ethaddress}
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
           />
           <Button
             type="submit"
