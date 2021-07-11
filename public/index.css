@@ -1,0 +1,6 @@
+body {
+    min-height: 80vh;
+    background-position: 0px -30vh;
+    background-repeat: no-repeat;
+    background-image: radial-gradient(50% 50% at 50% 50%, rgba(255, 0, 122, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+}

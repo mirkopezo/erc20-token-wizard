@@ -18,6 +18,12 @@ const useStyles = makeStyles((theme) => ({
     submit: {
       margin: theme.spacing(3, 0, 2),
     },
+    logo: {
+      width: '50px',
+      height: '50px',
+      marginTop: theme.spacing(4),
+      marginBottom: theme.spacing(2)
+    }
   }));
 
  export default useStyles; 

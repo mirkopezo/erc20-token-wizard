@@ -5,7 +5,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { useFormik } from 'formik';
@@ -13,6 +12,7 @@ import Web3 from 'web3';
 import useStyles from './styles';
 import AuthApi from './AuthApi';
 import Cookies from 'js-cookie';
+import { ReactComponent as Logo } from './images/ethereum.svg';
 
 function Copyright() {
   return (
@@ -58,9 +58,7 @@ export default function SignIn() {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
+        <Logo className={classes.logo} />
         <Typography component="h1" variant="h5">
           Connect to a wallet
         </Typography>
