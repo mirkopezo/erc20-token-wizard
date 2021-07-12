@@ -1,5 +1,4 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -50,7 +49,12 @@ export default function SignIn() {
     validate,
     onSubmit: values => {
       Auth.setAuth(true);
-      Cookies.set("wallet",formik.values.ethaddress);
+      const wallet = formik.values.ethaddress;
+      Cookies.set("wallet",wallet);
+      const balance = localStorage.getItem(wallet);
+      if(balance == null) {
+        localStorage.setItem(wallet,'0');
+      }
     }
   });
 
