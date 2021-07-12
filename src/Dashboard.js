@@ -46,6 +46,7 @@ function Dashboard() {
     initialValues: {
       transfervalue: '',
       transferaddress: '',
+      balance: localStorage.getItem(Cookies.get("wallet")),
     },
     validate: values => {
       const wallet = Cookies.get("wallet");
@@ -78,17 +79,19 @@ function Dashboard() {
         localStorage.setItem(recipient,'0');
         balanceRecipient = '0';
       }
-      const newBalanceSender = parseInt(balanceSender) - parseInt(transfervalue);
-      const newBalanceRecipient = parseInt(balanceRecipient) + parseInt(transfervalue);
-      localStorage.setItem(sender,JSON.stringify(newBalanceSender));
-      localStorage.setItem(recipient,JSON.stringify(newBalanceRecipient));
+      const newBalanceSender = JSON.stringify(parseInt(balanceSender) - parseInt(transfervalue));
+      const newBalanceRecipient = JSON.stringify(parseInt(balanceRecipient) + parseInt(transfervalue));
+      formikTransfer.setFieldValue('balance', newBalanceSender);
+      localStorage.setItem(sender, newBalanceSender);
+      localStorage.setItem(recipient, newBalanceRecipient);
     }
   });  
 
   return (
     <div>
         <h1>Dashboard</h1><div><button onClick={handleOnClick}>Logout</button></div>
-        <div>Wallet balance: {formikMint.values.balance}</div>
+        <div>Wallet balance: {formikMint.values.balance <= formikMint.values.balance ? 
+          formikMint.values.balance : formikTransfer.values.balance}</div>
         <form onSubmit={formikMint.handleSubmit}>
           <TextField 
             id="mintvalue" 
