@@ -2,8 +2,8 @@ import React from 'react';
 import SignIn from './SignIn';
 import Dashboard from './Dashboard';
 import Explore from './Explore';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import AuthApi from './AuthApi';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 function App() {

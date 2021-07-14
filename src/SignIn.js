@@ -6,12 +6,12 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
+import { ReactComponent as Logo } from './images/ethereum.svg';
 import { useFormik } from 'formik';
 import Web3 from 'web3';
-import useStyles from './styles';
+import useStyles from './SignInStyles';
 import AuthApi from './AuthApi';
 import Cookies from 'js-cookie';
-import { ReactComponent as Logo } from './images/ethereum.svg';
 
 function Copyright() {
   return (
@@ -38,9 +38,9 @@ const validate = values => {
 };
 
 export default function SignIn() {
-  const Auth = React.useContext(AuthApi);
-
   const classes = useStyles();
+  
+  const Auth = React.useContext(AuthApi);
 
   const formik = useFormik({
     initialValues: {
