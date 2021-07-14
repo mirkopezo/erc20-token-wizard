@@ -1,9 +1,6 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
 import { Typography, AppBar, CssBaseline, Grid, Tooltip, 
   Toolbar, Container, IconButton } from '@material-ui/core';
 import DesktopMacIcon from '@material-ui/icons/DesktopMac';
@@ -15,21 +12,60 @@ import { useFormik } from 'formik';
 import Web3 from 'web3';
 import useStyles from './DashboardStyles';
 
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import CloseIcon from '@material-ui/icons/Close';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = (theme) => ({
+  root: {
+    margin: 0,
+    padding: theme.spacing(2),
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+});
+
+const DialogTitle = withStyles(styles)((props) => {
+  const { children, classes, onClose, ...other } = props;
+  return (
+    <MuiDialogTitle disableTypography className={classes.root} {...other}>
+      <Typography variant="h6">{children}</Typography>
+      {onClose ? (
+        <IconButton className={classes.closeButton} onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </MuiDialogTitle>
+  );
+});
+
+const DialogContent = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiDialogContent);
+
 function Dashboard() {
   const classes = useStyles();
 
   const Auth = React.useContext(AuthApi);
 
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(true);
+  const [openMint, setOpenMint] = React.useState(false);
+  const handleClickOpenMint = () => {
+    setOpenMint(true);
   };
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseMint = () => {
+    setOpenMint(false);
   };
 
   const [openTransfer, setOpenTransfer] = React.useState(false);
-  const handleOpenTransfer = () => {
+  const handleClickOpenTransfer = () => {
     setOpenTransfer(true);
   };
   const handleCloseTransfer = () => {
@@ -145,116 +181,100 @@ function Dashboard() {
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="contained" color="primary" onClick={handleOpen} size="large">
+                  <Button variant="contained" color="primary" onClick={handleClickOpenMint} size="large">
                     Mint
                   </Button>
-                  <Modal
-                    className={classes.modal}
-                    open={open}
-                    onClose={handleClose}
-                    closeAfterTransition
-                    BackdropComponent={Backdrop}
-                    BackdropProps={{
-                      timeout: 500,
-                    }}
-                  >
-                    <Fade in={open}>
-                      <div className={classes.paper}>
-                        <Typography variant="h6" color="textPrimary" className={classes.text}>
-                          Wallet balance: {formikMint.values.balance}
-                        </Typography>
-                        <form onSubmit={formikMint.handleSubmit}>
-                          <Grid
-                            container
-                            direction="row"
-                            justifyContent="center"
-                            alignItems="flex-start"
-                            spacing={1}
-                          >
-                            <Grid item>
-                              <TextField 
-                                id="mintvalue" 
-                                label="Amount to mint"
-                                name="mintvalue" 
-                                variant="outlined"
-                                onChange={formikMint.handleChange}
-                                value={formikMint.values.mintvalue}
-                                error={formikMint.errors.mintvalue}
-                                helperText={formikMint.errors.mintvalue}
-                                InputProps={{ className: classes.input }}
-                              />
-                            </Grid>
-                            <Grid item>
-                              <Button type="submit" variant="contained" color="secondary" className={classes.button}>
-                                Mint
-                              </Button>
-                            </Grid>
+                  <Dialog onClose={handleCloseMint} open={openMint}>
+                    <DialogTitle onClose={handleCloseMint} align="center">
+                      Mint
+                    </DialogTitle>
+                    <DialogContent dividers>
+                      <Typography variant="h6" color="textPrimary" className={classes.text}>
+                        Wallet balance: {formikMint.values.balance}
+                      </Typography>
+                      <form onSubmit={formikMint.handleSubmit}>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="center"
+                          alignItems="flex-start"
+                          spacing={1}
+                        >
+                          <Grid item>
+                            <TextField 
+                              id="mintvalue" 
+                              label="Amount to mint"
+                              name="mintvalue" 
+                              variant="outlined"
+                              onChange={formikMint.handleChange}
+                              value={formikMint.values.mintvalue}
+                              error={formikMint.errors.mintvalue}
+                              helperText={formikMint.errors.mintvalue}
+                              InputProps={{ className: classes.input }}
+                            />
                           </Grid>
-                        </form>
-                      </div>
-                    </Fade>
-                  </Modal>
+                          <Grid item>
+                            <Button type="submit" variant="contained" color="secondary" className={classes.button}>
+                              Mint
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </Grid>
                 <Grid item>
-                  <Button variant="contained" color="primary" onClick={handleOpenTransfer} size="large">
+                  <Button variant="contained" color="primary" onClick={handleClickOpenTransfer} size="large">
                     Transfer
                   </Button>
-                  <Modal
-                    className={classes.modal}
-                    open={openTransfer}
-                    onClose={handleCloseTransfer}
-                    closeAfterTransition
-                    BackdropComponent={Backdrop}
-                    BackdropProps={{
-                      timeout: 500,
-                    }}
-                  >
-                    <Fade in={openTransfer}>
-                      <div className={classes.paper}>
-                        <form onSubmit={formikTransfer.handleSubmit}>
-                          <Grid
-                            container
-                            direction="row"
-                            justifyContent="center"
-                            alignItems="flex-start"
-                            spacing={1}
-                          >
-                            <Grid item>
-                              <TextField 
-                                id="transferaddress" 
-                                label="Recipient address"
-                                name="transferaddress" 
-                                variant="outlined"
-                                onChange={formikTransfer.handleChange}
-                                value={formikTransfer.values.transferaddress}
-                                error={formikTransfer.errors.transferaddress}
-                                helperText={formikTransfer.errors.transferaddress}
-                                InputProps={{ className: classes.input }}
-                              />
-                            </Grid>
-                            <Grid item>
-                              <TextField 
-                                id="transfervalue" 
-                                label="Amount to transfer"
-                                name="transfervalue" 
-                                variant="outlined"
-                                onChange={formikTransfer.handleChange}
-                                value={formikTransfer.values.transfervalue}
-                                error={formikTransfer.errors.transfervalue}
-                                helperText={formikTransfer.errors.transfervalue}
-                                InputProps={{ className: classes.input }}
-                              />
-                            </Grid>
-                            <Grid item>
-                              <Button type="submit" variant="contained" color="secondary" className={classes.button}>
-                                Transfer
-                              </Button>
-                            </Grid>
+                  <Dialog onClose={handleCloseTransfer} open={openTransfer} maxWidth="md">
+                    <DialogTitle onClose={handleCloseTransfer} align="center">
+                      Transfer
+                    </DialogTitle>
+                    <DialogContent dividers>
+                      <form onSubmit={formikTransfer.handleSubmit}>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="center"
+                          alignItems="flex-start"
+                          spacing={1}
+                        >
+                          <Grid item>
+                            <TextField 
+                              id="transferaddress" 
+                              label="Recipient address"
+                              name="transferaddress" 
+                              variant="outlined"
+                              onChange={formikTransfer.handleChange}
+                              value={formikTransfer.values.transferaddress}
+                              error={formikTransfer.errors.transferaddress}
+                              helperText={formikTransfer.errors.transferaddress}
+                              InputProps={{ className: classes.input }}
+                            />
                           </Grid>
-                        </form>
-                      </div>
-                    </Fade>
-                  </Modal>
+                          <Grid item>
+                            <TextField 
+                              id="transfervalue" 
+                              label="Amount to transfer"
+                              name="transfervalue" 
+                              variant="outlined"
+                              onChange={formikTransfer.handleChange}
+                              value={formikTransfer.values.transfervalue}
+                              error={formikTransfer.errors.transfervalue}
+                              helperText={formikTransfer.errors.transfervalue}
+                              InputProps={{ className: classes.input }}
+                            />
+                          </Grid>
+                          <Grid item>
+                            <Button type="submit" variant="contained" color="secondary" className={classes.button}>
+                              Transfer
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </Grid>
               </Grid>
             </div>
