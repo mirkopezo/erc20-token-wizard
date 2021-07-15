@@ -97,7 +97,7 @@ function Dashboard() {
       const wallet = Cookies.get("wallet");
       const mintvalue = formikMint.values.mintvalue;
       const balance = localStorage.getItem(wallet);
-      const result = JSON.stringify(parseInt(balance) + parseInt(mintvalue));
+      const result = (parseFloat(balance) + parseFloat(mintvalue)).toFixed(8);
       formikMint.setFieldValue('balance', result);
       localStorage.setItem(wallet, result);
     }
@@ -125,7 +125,7 @@ function Dashboard() {
       else if(isNaN(values.transfervalue)) {
         errors.transfervalue = 'You must enter a number';
       }
-      else if(parseInt(values.transfervalue) > parseInt(balance)) {
+      else if(parseFloat(values.transfervalue) > parseFloat(balance)) {
         errors.transfervalue = 'You can\'t transfer more than you have';
       }
       return errors;
@@ -140,8 +140,8 @@ function Dashboard() {
         localStorage.setItem(recipient,'0');
         balanceRecipient = '0';
       }
-      const newBalanceSender = JSON.stringify(parseInt(balanceSender) - parseInt(transfervalue));
-      const newBalanceRecipient = JSON.stringify(parseInt(balanceRecipient) + parseInt(transfervalue));
+      const newBalanceSender = (parseFloat(balanceSender) - parseFloat(transfervalue)).toFixed(8);
+      const newBalanceRecipient = (parseFloat(balanceRecipient) + parseFloat(transfervalue)).toFixed(8);
       formikTransfer.setFieldValue('balance', newBalanceSender);
       localStorage.setItem(sender, newBalanceSender);
       localStorage.setItem(recipient, newBalanceRecipient);
