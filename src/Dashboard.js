@@ -85,11 +85,15 @@ function Dashboard() {
     },
     validate: values => {
       const errors = {};
+      const regExp = /^\d*(\.)?(\d{0,8})?$/
       if(!values.mintvalue) {
         errors.mintvalue = 'Required';
       }
       else if(isNaN(values.mintvalue)) {
         errors.mintvalue = 'You must enter a number';
+      }
+      else if(!regExp.test(values.mintvalue)) {
+        errors.mintvalue = 'You can\'t have more than 8 decimals';
       }
       return errors;
     },
@@ -113,6 +117,7 @@ function Dashboard() {
       const wallet = Cookies.get("wallet");
       const balance = localStorage.getItem(wallet);
       const errors = {};
+      const regExp = /^\d*(\.)?(\d{0,8})?$/
       if(!values.transferaddress){
         errors.transferaddress = 'Required';
       }
@@ -124,6 +129,9 @@ function Dashboard() {
       }
       else if(isNaN(values.transfervalue)) {
         errors.transfervalue = 'You must enter a number';
+      }
+      else if(!regExp.test(values.transfervalue)) {
+        errors.transfervalue = 'You can\'t have more than 8 decimals';
       }
       else if(parseFloat(values.transfervalue) > parseFloat(balance)) {
         errors.transfervalue = 'You can\'t transfer more than you have';
