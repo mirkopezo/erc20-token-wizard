@@ -124,6 +124,9 @@ function Dashboard() {
       else if(!Web3.utils.isAddress(values.transferaddress)) {
         errors.transferaddress = 'Ethereum address is not valid';
       }
+      else if(wallet === values.transferaddress) {
+        errors.transferaddress = 'You can\'t send tokens to yourself';
+      }
       if(!values.transfervalue) {
         errors.transfervalue = 'Required';
       }
