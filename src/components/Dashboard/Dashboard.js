@@ -6,11 +6,11 @@ import { Typography, AppBar, CssBaseline, Grid, Tooltip,
 import DesktopMacIcon from '@material-ui/icons/DesktopMac';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Cookies from 'js-cookie';
-import AuthApi from './AuthApi';
+import AuthApi from 'components/AuthApi/AuthApi';
 import { Link } from "react-router-dom";
 import { useFormik } from 'formik';
 import Web3 from 'web3';
-import useStyles from './DashboardStyles';
+import useStyles from 'components/Dashboard/DashboardStyles';
 
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';

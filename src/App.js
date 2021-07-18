@@ -1,8 +1,8 @@
 import React from 'react';
-import SignIn from './SignIn';
-import Dashboard from './Dashboard';
-import Explore from './Explore';
-import AuthApi from './AuthApi';
+import SignIn from 'components/SignIn/SignIn';
+import Dashboard from 'components/Dashboard/Dashboard';
+import Explore from 'components/Explore/Explore';
+import AuthApi from 'components/AuthApi/AuthApi';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
 

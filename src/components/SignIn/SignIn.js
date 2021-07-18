@@ -6,11 +6,11 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import { ReactComponent as Logo } from './images/ethereum.svg';
+import { ReactComponent as Logo } from 'images/ethereum.svg';
 import { useFormik } from 'formik';
 import Web3 from 'web3';
-import useStyles from './SignInStyles';
-import AuthApi from './AuthApi';
+import useStyles from 'components/SignIn/SignInStyles';
+import AuthApi from 'components/AuthApi/AuthApi';
 import Cookies from 'js-cookie';
 
 function Copyright() {

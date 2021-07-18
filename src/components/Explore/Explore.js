@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { useFormik } from 'formik';
 import Web3 from 'web3';
 import SearchIcon from '@material-ui/icons/Search';
-import useStyles from './ExploreStyles';
+import useStyles from 'components/Explore/ExploreStyles';
 
 function Explore() {
   const classes = useStyles();
