@@ -1,10 +1,10 @@
 import React from 'react';
-import SignIn from 'components/SignIn/SignIn';
-import Dashboard from 'components/Dashboard/Dashboard';
-import Explore from 'components/Explore/Explore';
-import AuthApi from 'components/AuthApi/AuthApi';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import SignIn from 'pages/SignIn/SignIn';
+import Dashboard from 'pages/Dashboard/Dashboard';
+import Explore from 'pages/Explore/Explore';
+import AuthApi from 'components/AuthApi/AuthApi';
 
 function App() {
   const [auth,setAuth] = React.useState(false);

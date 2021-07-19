@@ -9,7 +9,7 @@ import Container from '@material-ui/core/Container';
 import { ReactComponent as Logo } from 'images/ethereum.svg';
 import { useFormik } from 'formik';
 import Web3 from 'web3';
-import useStyles from 'components/SignIn/SignInStyles';
+import useStyles from 'pages/SignIn/SignInStyles';
 import AuthApi from 'components/AuthApi/AuthApi';
 import Cookies from 'js-cookie';
 
