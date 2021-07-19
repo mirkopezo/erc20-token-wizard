@@ -8,9 +8,26 @@ import Dialog from '@material-ui/core/Dialog';
 import useStyles from 'components/Transfer/TransferStyles';
 import Web3 from 'web3';
 import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function Transfer() {
     const classes = useStyles();
+
+    const [openSnack, setOpenSnack] = React.useState(false);
+    const handleClickSnack = () => {
+        setOpenSnack(true);
+    };
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnack(false);
+    };
 
     const [openTransfer, setOpenTransfer] = React.useState(false);
     const handleClickOpenTransfer = () => {
@@ -19,6 +36,7 @@ function Transfer() {
     const handleCloseTransfer = () => {
         setOpenTransfer(false);
     };
+
     const formikTransfer = useFormik({
         initialValues: {
         transfervalue: '',
@@ -45,8 +63,8 @@ function Transfer() {
         else if(isNaN(values.transfervalue)) {
             errors.transfervalue = 'You must enter a number';
         }
-        else if(values.trasnfervalue < 0 || values.transfervalue === '-0') {
-            errors.mintvalue = 'You must enter a positive number';
+        else if(values.transfervalue < 0 || values.transfervalue === '-0') {
+            errors.transfervalue = 'You must enter a positive number';
         }
         else if(!regExp.test(values.transfervalue)) {
             errors.transfervalue = 'You can\'t have more than 8 decimals';
@@ -71,6 +89,7 @@ function Transfer() {
         formikTransfer.setFieldValue('balance', newBalanceSender);
         localStorage.setItem(sender, newBalanceSender);
         localStorage.setItem(recipient, newBalanceRecipient);
+        handleClickSnack();
         }
     });  
     return(
@@ -126,6 +145,11 @@ function Transfer() {
                     </form>
                 </DialogContent>
             </Dialog>
+            <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+                <Alert onClose={handleCloseSnack} severity="success">
+                    Transfer was successfully executed!
+                </Alert>
+            </Snackbar>
         </>
     );
 }

@@ -7,10 +7,26 @@ import { Typography, Grid } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import useStyles from 'components/Mint/MintStyles';
 import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function Mint() {
   const classes = useStyles();
+
+  const [openSnack, setOpenSnack] = React.useState(false);
+  const handleClickSnack = () => {
+    setOpenSnack(true);
+  };
+  const handleCloseSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnack(false);
+  };
 
   const [openMint, setOpenMint] = React.useState(false);
   const handleClickOpenMint = () => {
@@ -50,6 +66,7 @@ function Mint() {
       const result = (parseFloat(balance) + parseFloat(mintvalue)).toFixed(8);
       formikMint.setFieldValue('balance', result);
       localStorage.setItem(wallet, result);
+      handleClickSnack();
     }
   });
 
@@ -96,6 +113,11 @@ function Mint() {
           </form>
         </DialogContent>
       </Dialog>
+      <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+        <Alert onClose={handleCloseSnack} severity="success">
+          Mint was successfully executed!
+        </Alert>
+      </Snackbar>
     </>
   );
 }
