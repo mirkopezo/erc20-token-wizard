@@ -64,8 +64,8 @@ function Transfer() {
         else if(isNaN(values.transfervalue)) {
             errors.transfervalue = 'You must enter a number';
         }
-        else if(values.transfervalue < 0 || values.transfervalue === '-0') {
-            errors.transfervalue = 'You must enter a positive number';
+        else if(values.transfervalue <= 0 || values.transfervalue === '-0') {
+            errors.transfervalue = 'You must enter a number greater than zero';
         }
         else if(!regExp.test(values.transfervalue)) {
             errors.transfervalue = 'You can\'t have more than 8 decimals';
@@ -92,8 +92,10 @@ function Transfer() {
         formikTransfer.setFieldValue('balance', newBalanceSender);
         getSender[0].balance = newBalanceSender;
         getRecipient[0].balance = newBalanceRecipient;
-        getSender.push({type: 'output', from: sender, to: recipient, value: transfervalue});
-        getRecipient.push({type: 'input', from: sender, to: recipient, value: transfervalue});
+        const lengthSender = getSender.length;
+        const lengthRecipient = getRecipient.length;
+        getSender.push({id: lengthSender - 1, type: 'output', from: sender, to: recipient, value: transfervalue});
+        getRecipient.push({id: lengthRecipient - 1, type: 'input', from: sender, to: recipient, value: transfervalue});
         localStorage.setItem(sender, JSON.stringify(getSender));
         localStorage.setItem(recipient, JSON.stringify(getRecipient));
         handleClickSnack();

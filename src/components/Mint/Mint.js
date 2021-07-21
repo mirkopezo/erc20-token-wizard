@@ -51,8 +51,8 @@ function Mint() {
       else if(isNaN(values.mintvalue)) {
         errors.mintvalue = 'You must enter a number';
       }
-      else if(values.mintvalue < 0 || values.mintvalue === '-0') {
-        errors.mintvalue = 'You must enter a positive number';
+      else if(values.mintvalue <= 0 || values.mintvalue === '-0') {
+        errors.mintvalue = 'You must enter a number greater than zero';
       }
       else if(!regExp.test(values.mintvalue)) {
         errors.mintvalue = 'You can\'t have more than 8 decimals';
@@ -67,7 +67,8 @@ function Mint() {
       const result = (parseFloat(walletBalance) + parseFloat(mintvalue)).toFixed(8);
       formikMint.setFieldValue('balance', result);
       getWallet[0].balance = result;
-      getWallet.push({type: 'input', from: 'null', to: wallet, value: mintvalue});
+      const lengthArr = getWallet.length;
+      getWallet.push({id: lengthArr - 1, type: 'input', from: 'null', to: wallet, value: mintvalue});
       localStorage.setItem(wallet, JSON.stringify(getWallet));
       handleClickSnack();
     }

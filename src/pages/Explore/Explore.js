@@ -9,6 +9,7 @@ import { useFormik } from 'formik';
 import Web3 from 'web3';
 import SearchIcon from '@material-ui/icons/Search';
 import useStyles from 'pages/Explore/ExploreStyles';
+import TransferHistory from 'components/TransferHistory/TransferHistory';
 
 function Explore() {
   const classes = useStyles();
@@ -18,6 +19,7 @@ function Explore() {
     initialValues: {
       exploreaddress: '',
       explorebalance: '',
+      addressfortable: '',
     },
     validate: values => {
       const errors = {};
@@ -38,6 +40,7 @@ function Explore() {
       getExploreAddress = JSON.parse(localStorage.getItem(exploreAddress));
       const exploreAddressBalance = getExploreAddress[0].balance;
       formikExplore.setFieldValue('explorebalance', exploreAddressBalance);
+      formikExplore.setFieldValue('addressfortable', formikExplore.values.exploreaddress);
     }
   });
   return(
@@ -53,7 +56,7 @@ function Explore() {
       </AppBar>
       <main>
         <div>
-          <Container maxWidth="sm" className={classes.container}>
+          <Container maxWidth="md" className={classes.container}>
             <form onSubmit={formikExplore.handleSubmit}>
               <Grid
                 container
@@ -85,6 +88,11 @@ function Explore() {
                   Balance of this address is: {formikExplore.values.explorebalance}
               </Typography>
             </form>
+            <Grid item xs={12}>
+              <div>
+                {formikExplore.values.addressfortable && <TransferHistory addr={formikExplore.values.addressfortable}/>}
+              </div>
+            </Grid>
           </Container>
         </div>
       </main>

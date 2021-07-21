@@ -23,6 +23,12 @@ const useStyles = makeStyles((theme) => ({
         marginTop: '20px',
         marginBottom: '25px',
     },
+    paper: {
+        padding: theme.spacing(2),
+        display: 'flex',
+        overflow: 'auto',
+        flexDirection: 'column',
+    },
 }));
 
 export default useStyles;
