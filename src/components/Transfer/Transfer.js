@@ -44,8 +44,9 @@ function Transfer() {
         balance: localStorage.getItem(Cookies.get("wallet")),
         },
         validate: values => {
-        const wallet = Cookies.get("wallet");
-        const balance = localStorage.getItem(wallet);
+        const sender = Cookies.get("wallet");
+        const getSender = JSON.parse(localStorage.getItem(sender));
+        const balanceSender = getSender[0].balance;
         const errors = {};
         const regExp = /^\d*(\.)?(\d{0,8})?$/
         if(!values.transferaddress){
@@ -54,7 +55,7 @@ function Transfer() {
         else if(!Web3.utils.isAddress(values.transferaddress)) {
             errors.transferaddress = 'Ethereum address is not valid';
         }
-        else if(wallet === values.transferaddress) {
+        else if(sender === values.transferaddress) {
             errors.transferaddress = 'You can\'t send tokens to yourself';
         }
         if(!values.transfervalue) {
@@ -69,7 +70,7 @@ function Transfer() {
         else if(!regExp.test(values.transfervalue)) {
             errors.transfervalue = 'You can\'t have more than 8 decimals';
         }
-        else if(parseFloat(values.transfervalue) > parseFloat(balance)) {
+        else if(parseFloat(values.transfervalue) > parseFloat(balanceSender)) {
             errors.transfervalue = 'You can\'t transfer more than you have';
         }
         return errors;
@@ -78,17 +79,23 @@ function Transfer() {
         const sender = Cookies.get("wallet");
         const recipient = formikTransfer.values.transferaddress;
         const transfervalue = formikTransfer.values.transfervalue;
-        const balanceSender = localStorage.getItem(sender);
-        let balanceRecipient = localStorage.getItem(recipient);
-        if (balanceRecipient == null) {
-            localStorage.setItem(recipient,'0');
-            balanceRecipient = '0';
+        let getRecipient = JSON.parse(localStorage.getItem(recipient));
+        if(getRecipient === null) {
+            localStorage.setItem(recipient, JSON.stringify([{balance: '0'}]));
         }
+        getRecipient = JSON.parse(localStorage.getItem(recipient));
+        const getSender = JSON.parse(localStorage.getItem(sender));
+        const balanceRecipient = getRecipient[0].balance;
+        const balanceSender = getSender[0].balance;
         const newBalanceSender = (parseFloat(balanceSender) - parseFloat(transfervalue)).toFixed(8);
         const newBalanceRecipient = (parseFloat(balanceRecipient) + parseFloat(transfervalue)).toFixed(8);
         formikTransfer.setFieldValue('balance', newBalanceSender);
-        localStorage.setItem(sender, newBalanceSender);
-        localStorage.setItem(recipient, newBalanceRecipient);
+        getSender[0].balance = newBalanceSender;
+        getRecipient[0].balance = newBalanceRecipient;
+        getSender.push({type: 'output', from: sender, to: recipient, value: transfervalue});
+        getRecipient.push({type: 'input', from: sender, to: recipient, value: transfervalue});
+        localStorage.setItem(sender, JSON.stringify(getSender));
+        localStorage.setItem(recipient, JSON.stringify(getRecipient));
         handleClickSnack();
         }
     });  

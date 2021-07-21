@@ -40,7 +40,7 @@ function Mint() {
     enableReinitialize: true,
     initialValues: {
       mintvalue: '',
-      balance: localStorage.getItem(Cookies.get("wallet")),
+      balance: JSON.parse(localStorage.getItem(Cookies.get("wallet"))) === null ? '' : JSON.parse(localStorage.getItem(Cookies.get("wallet")))[0].balance,
     },
     validate: values => {
       const errors = {};
@@ -62,10 +62,13 @@ function Mint() {
     onSubmit: values => {
       const wallet = Cookies.get("wallet");
       const mintvalue = formikMint.values.mintvalue;
-      const balance = localStorage.getItem(wallet);
-      const result = (parseFloat(balance) + parseFloat(mintvalue)).toFixed(8);
+      const getWallet = JSON.parse(localStorage.getItem(wallet));
+      const walletBalance = getWallet[0].balance;
+      const result = (parseFloat(walletBalance) + parseFloat(mintvalue)).toFixed(8);
       formikMint.setFieldValue('balance', result);
-      localStorage.setItem(wallet, result);
+      getWallet[0].balance = result;
+      getWallet.push({type: 'input', from: 'null', to: wallet, value: mintvalue});
+      localStorage.setItem(wallet, JSON.stringify(getWallet));
       handleClickSnack();
     }
   });

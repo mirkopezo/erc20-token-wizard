@@ -51,9 +51,10 @@ export default function SignIn() {
       Auth.setAuth(true);
       const wallet = formik.values.ethaddress;
       Cookies.set("wallet",wallet);
-      const balance = localStorage.getItem(wallet);
-      if(balance == null) {
-        localStorage.setItem(wallet,'0');
+      console.log("postavljen cookie");
+      const getWallet = JSON.parse(localStorage.getItem(wallet));
+      if(getWallet === null) {
+        localStorage.setItem(wallet, JSON.stringify([{balance: '0'}]));
       }
     }
   });

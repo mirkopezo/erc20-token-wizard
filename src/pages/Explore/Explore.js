@@ -31,11 +31,12 @@ function Explore() {
     },
     onSubmit: values => {
       const exploreAddress = formikExplore.values.exploreaddress;
-      let exploreAddressBalance = localStorage.getItem(exploreAddress);
-      if (exploreAddressBalance == null) {
-        localStorage.setItem(exploreAddress,'0');
-        exploreAddressBalance = '0';
+      let getExploreAddress = JSON.parse(localStorage.getItem(exploreAddress));
+      if(getExploreAddress === null) {
+        localStorage.setItem(exploreAddress, JSON.stringify([{balance: '0'}]));
       }
+      getExploreAddress = JSON.parse(localStorage.getItem(exploreAddress));
+      const exploreAddressBalance = getExploreAddress[0].balance;
       formikExplore.setFieldValue('explorebalance', exploreAddressBalance);
     }
   });
