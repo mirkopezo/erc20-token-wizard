@@ -12,6 +12,7 @@ import Web3 from 'web3';
 import useStyles from 'pages/SignIn/SignInStyles';
 import AuthApi from 'components/AuthApi/AuthApi';
 import Cookies from 'js-cookie';
+import { checkForAddressInStorage } from 'lib/checkForAddressInStorage';
 
 function Copyright() {
   return (
@@ -49,13 +50,9 @@ export default function SignIn() {
     validate,
     onSubmit: values => {
       Auth.setAuth(true);
-      const wallet = formik.values.ethaddress;
-      Cookies.set("wallet",wallet);
-      console.log("postavljen cookie");
-      const getWallet = JSON.parse(localStorage.getItem(wallet));
-      if(getWallet === null) {
-        localStorage.setItem(wallet, JSON.stringify([{balance: '0'}]));
-      }
+      const walletAddress = formik.values.ethaddress;
+      Cookies.set("wallet", walletAddress);
+      checkForAddressInStorage(walletAddress);
     }
   });
 

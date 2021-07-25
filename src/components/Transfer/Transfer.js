@@ -10,6 +10,9 @@ import Web3 from 'web3';
 import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import { checkForAddressInStorage } from 'lib/checkForAddressInStorage';
+import { inputTransaction } from 'lib/inputTransaction';
+import { outputTransaction } from 'lib/outputTransaction';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -39,65 +42,48 @@ function Transfer() {
 
     const formikTransfer = useFormik({
         initialValues: {
-        transfervalue: '',
-        transferaddress: '',
-        balance: localStorage.getItem(Cookies.get("wallet")),
+        transferValue: '',
+        transferAddress: '',
         },
         validate: values => {
-        const sender = Cookies.get("wallet");
-        const getSender = JSON.parse(localStorage.getItem(sender));
-        const balanceSender = getSender[0].balance;
+        const walletAddress = Cookies.get("wallet");
+        const sender = JSON.parse(localStorage.getItem(walletAddress));
+        const balanceSender = sender.balance;
         const errors = {};
         const regExp = /^\d*(\.)?(\d{0,8})?$/
-        if(!values.transferaddress){
-            errors.transferaddress = 'Required';
+        if(!values.transferAddress){
+            errors.transferAddress = 'Required';
         }
-        else if(!Web3.utils.isAddress(values.transferaddress)) {
-            errors.transferaddress = 'Ethereum address is not valid';
+        else if(!Web3.utils.isAddress(values.transferAddress)) {
+            errors.transferAddress = 'Ethereum address is not valid';
         }
-        else if(sender === values.transferaddress) {
-            errors.transferaddress = 'You can\'t send tokens to yourself';
+        else if(walletAddress === values.transferAddress) {
+            errors.transferAddress = 'You can\'t send tokens to yourself';
         }
-        if(!values.transfervalue) {
-            errors.transfervalue = 'Required';
+        if(!values.transferValue) {
+            errors.transferValue = 'Required';
         }
-        else if(isNaN(values.transfervalue)) {
-            errors.transfervalue = 'You must enter a number';
+        else if(isNaN(values.transferValue)) {
+            errors.transferValue = 'You must enter a number';
         }
-        else if(values.transfervalue <= 0 || values.transfervalue === '-0') {
-            errors.transfervalue = 'You must enter a number greater than zero';
+        else if(values.transferValue <= 0 || values.transferValue === '-0') {
+            errors.transferValue = 'You must enter a number greater than zero';
         }
-        else if(!regExp.test(values.transfervalue)) {
-            errors.transfervalue = 'You can\'t have more than 8 decimals';
+        else if(!regExp.test(values.transferValue)) {
+            errors.transferValue = 'You can\'t have more than 8 decimals';
         }
-        else if(parseFloat(values.transfervalue) > parseFloat(balanceSender)) {
-            errors.transfervalue = 'You can\'t transfer more than you have';
+        else if(parseFloat(values.transferValue) > parseFloat(balanceSender)) {
+            errors.transferValue = 'You can\'t transfer more than you have';
         }
         return errors;
         },
         onSubmit: values => {
-        const sender = Cookies.get("wallet");
-        const recipient = formikTransfer.values.transferaddress;
-        const transfervalue = formikTransfer.values.transfervalue;
-        let getRecipient = JSON.parse(localStorage.getItem(recipient));
-        if(getRecipient === null) {
-            localStorage.setItem(recipient, JSON.stringify([{balance: '0'}]));
-        }
-        getRecipient = JSON.parse(localStorage.getItem(recipient));
-        const getSender = JSON.parse(localStorage.getItem(sender));
-        const balanceRecipient = getRecipient[0].balance;
-        const balanceSender = getSender[0].balance;
-        const newBalanceSender = (parseFloat(balanceSender) - parseFloat(transfervalue)).toFixed(8);
-        const newBalanceRecipient = (parseFloat(balanceRecipient) + parseFloat(transfervalue)).toFixed(8);
-        formikTransfer.setFieldValue('balance', newBalanceSender);
-        getSender[0].balance = newBalanceSender;
-        getRecipient[0].balance = newBalanceRecipient;
-        const lengthSender = getSender.length;
-        const lengthRecipient = getRecipient.length;
-        getSender.push({id: lengthSender - 1, type: 'output', from: sender, to: recipient, value: transfervalue});
-        getRecipient.push({id: lengthRecipient - 1, type: 'input', from: sender, to: recipient, value: transfervalue});
-        localStorage.setItem(sender, JSON.stringify(getSender));
-        localStorage.setItem(recipient, JSON.stringify(getRecipient));
+        const walletAddress = Cookies.get("wallet");
+        const recipientAddress = formikTransfer.values.transferAddress;
+        const transferValue = formikTransfer.values.transferValue;
+        checkForAddressInStorage(recipientAddress);
+        outputTransaction(walletAddress, recipientAddress, transferValue);
+        inputTransaction(walletAddress, recipientAddress, transferValue);
         handleClickSnack();
         }
     });  
@@ -121,27 +107,27 @@ function Transfer() {
                         >
                             <Grid item>
                                 <TextField 
-                                    id="transferaddress" 
+                                    id="transferAddress" 
                                     label="Recipient address"
-                                    name="transferaddress" 
+                                    name="transferAddress" 
                                     variant="outlined"
                                     onChange={formikTransfer.handleChange}
-                                    value={formikTransfer.values.transferaddress}
-                                    error={formikTransfer.errors.transferaddress}
-                                    helperText={formikTransfer.errors.transferaddress}
+                                    value={formikTransfer.values.transferAddress}
+                                    error={formikTransfer.errors.transferAddress}
+                                    helperText={formikTransfer.errors.transferAddress}
                                     InputProps={{ className: classes.input }}
                                 />
                             </Grid>
                             <Grid item>
                                 <TextField 
-                                    id="transfervalue" 
+                                    id="transferValue" 
                                     label="Amount to transfer"
-                                    name="transfervalue" 
+                                    name="transferValue" 
                                     variant="outlined"
                                     onChange={formikTransfer.handleChange}
-                                    value={formikTransfer.values.transfervalue}
-                                    error={formikTransfer.errors.transfervalue}
-                                    helperText={formikTransfer.errors.transfervalue}
+                                    value={formikTransfer.values.transferValue}
+                                    error={formikTransfer.errors.transferValue}
+                                    helperText={formikTransfer.errors.transferValue}
                                     InputProps={{ className: classes.input }}
                                 />
                             </Grid>

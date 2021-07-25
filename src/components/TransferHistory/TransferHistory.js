@@ -17,12 +17,11 @@ const useStyles = makeStyles(() => ({
 
 function TransferHistory(props) {
     const classes = useStyles();
-    if(props.addr === ''){ return(<div></div>); }
+    if(props.addr === ''){ return(null); }
     else{
-        let getExploreAddress = JSON.parse(localStorage.getItem(props.addr));
-        if(getExploreAddress.length === 1) return(<div></div>);
+        let exploreWallet = JSON.parse(localStorage.getItem(props.addr));
+        if(exploreWallet.transactions.length === 0) return(null);
         else {
-            getExploreAddress.shift();
             return(
                 <React.Fragment>
                     <Typography variant="h6" gutterBottom>
@@ -38,7 +37,7 @@ function TransferHistory(props) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {getExploreAddress.map((row) => (
+                            {exploreWallet.transactions.map((row) => (
                             <TableRow key={row.id}>
                                 <TableCell>{row.type}</TableCell>
                                 <TableCell>{row.from}</TableCell>

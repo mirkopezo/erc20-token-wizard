@@ -9,6 +9,8 @@ import useStyles from 'components/Mint/MintStyles';
 import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import { inputTransaction } from 'lib/inputTransaction';
+import { getAddressBalance } from 'lib/getAddressBalance';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -39,37 +41,32 @@ function Mint() {
   const formikMint = useFormik({
     enableReinitialize: true,
     initialValues: {
-      mintvalue: '',
-      balance: JSON.parse(localStorage.getItem(Cookies.get("wallet"))) === null ? '' : JSON.parse(localStorage.getItem(Cookies.get("wallet")))[0].balance,
+      mintValue: '',
+      balance: JSON.parse(localStorage.getItem(Cookies.get("wallet"))) === null ? '' : JSON.parse(localStorage.getItem(Cookies.get("wallet"))).balance,
     },
     validate: values => {
       const errors = {};
       const regExp = /^\d*(\.)?(\d{0,8})?$/
-      if(!values.mintvalue) {
-        errors.mintvalue = 'Required';
+      if(!values.mintValue) {
+        errors.mintValue = 'Required';
       }
-      else if(isNaN(values.mintvalue)) {
-        errors.mintvalue = 'You must enter a number';
+      else if(isNaN(values.mintValue)) {
+        errors.mintValue = 'You must enter a number';
       }
-      else if(values.mintvalue <= 0 || values.mintvalue === '-0') {
-        errors.mintvalue = 'You must enter a number greater than zero';
+      else if(values.mintValue <= 0 || values.mintValue === '-0') {
+        errors.mintValue = 'You must enter a number greater than zero';
       }
-      else if(!regExp.test(values.mintvalue)) {
-        errors.mintvalue = 'You can\'t have more than 8 decimals';
+      else if(!regExp.test(values.mintValue)) {
+        errors.mintValue = 'You can\'t have more than 8 decimals';
       }
       return errors;
     },
     onSubmit: values => {
-      const wallet = Cookies.get("wallet");
-      const mintvalue = formikMint.values.mintvalue;
-      const getWallet = JSON.parse(localStorage.getItem(wallet));
-      const walletBalance = getWallet[0].balance;
-      const result = (parseFloat(walletBalance) + parseFloat(mintvalue)).toFixed(8);
-      formikMint.setFieldValue('balance', result);
-      getWallet[0].balance = result;
-      const lengthArr = getWallet.length;
-      getWallet.push({id: lengthArr - 1, type: 'input', from: 'null', to: wallet, value: mintvalue});
-      localStorage.setItem(wallet, JSON.stringify(getWallet));
+      const walletAddress = Cookies.get("wallet");
+      const mintValue = formikMint.values.mintValue;
+      inputTransaction('null', walletAddress, mintValue);
+      const newBalance = getAddressBalance(walletAddress);
+      formikMint.setFieldValue('balance', newBalance);
       handleClickSnack();
     }
   });
@@ -97,14 +94,14 @@ function Mint() {
             >
               <Grid item>
                 <TextField 
-                  id="mintvalue" 
+                  id="mintValue" 
                   label="Amount to mint"
-                  name="mintvalue" 
+                  name="mintValue" 
                   variant="outlined"
                   onChange={formikMint.handleChange}
-                  value={formikMint.values.mintvalue}
-                  error={formikMint.errors.mintvalue}
-                  helperText={formikMint.errors.mintvalue}
+                  value={formikMint.values.mintValue}
+                  error={formikMint.errors.mintValue}
+                  helperText={formikMint.errors.mintValue}
                   InputProps={{ className: classes.input }}
                 />
               </Grid>
