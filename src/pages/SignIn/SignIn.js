@@ -6,12 +6,13 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import { ReactComponent as Logo } from './images/ethereum.svg';
+import { ReactComponent as Logo } from 'images/ethereum.svg';
 import { useFormik } from 'formik';
 import Web3 from 'web3';
-import useStyles from './SignInStyles';
-import AuthApi from './AuthApi';
+import useStyles from 'pages/SignIn/SignInStyles';
+import AuthApi from 'components/AuthApi/AuthApi';
 import Cookies from 'js-cookie';
+import { checkForAddressInStorage } from 'lib/checkForAddressInStorage';
 
 function Copyright() {
   return (
@@ -49,12 +50,9 @@ export default function SignIn() {
     validate,
     onSubmit: values => {
       Auth.setAuth(true);
-      const wallet = formik.values.ethaddress;
-      Cookies.set("wallet",wallet);
-      const balance = localStorage.getItem(wallet);
-      if(balance == null) {
-        localStorage.setItem(wallet,'0');
-      }
+      const walletAddress = formik.values.ethaddress;
+      Cookies.set("wallet", walletAddress);
+      checkForAddressInStorage(walletAddress);
     }
   });
 

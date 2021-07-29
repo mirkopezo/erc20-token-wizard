@@ -8,7 +8,10 @@ import { Link } from "react-router-dom";
 import { useFormik } from 'formik';
 import Web3 from 'web3';
 import SearchIcon from '@material-ui/icons/Search';
-import useStyles from './ExploreStyles';
+import useStyles from 'pages/Explore/ExploreStyles';
+import TransferHistory from 'components/TransferHistory/TransferHistory';
+import { checkForAddressInStorage } from 'lib/checkForAddressInStorage';
+import { getAddressBalance } from 'lib/getAddressBalance';
 
 function Explore() {
   const classes = useStyles();
@@ -16,27 +19,26 @@ function Explore() {
   const formikExplore = useFormik({
     enableReinitialize: true,
     initialValues: {
-      exploreaddress: '',
-      explorebalance: '',
+      exploreAddress: '',
+      exploreBalance: '',
+      addressForTable: '',
     },
     validate: values => {
       const errors = {};
-      if(!values.exploreaddress) {
-        errors.exploreaddress = 'Required';
+      if(!values.exploreAddress) {
+        errors.exploreAddress = 'Required';
       }
-      else if(!Web3.utils.isAddress(values.exploreaddress)) {
-        errors.exploreaddress = 'Ethereum address is not valid';
+      else if(!Web3.utils.isAddress(values.exploreAddress)) {
+        errors.exploreAddress = 'Ethereum address is not valid';
       }
       return errors;
     },
     onSubmit: values => {
-      const exploreAddress = formikExplore.values.exploreaddress;
-      let exploreAddressBalance = localStorage.getItem(exploreAddress);
-      if (exploreAddressBalance == null) {
-        localStorage.setItem(exploreAddress,'0');
-        exploreAddressBalance = '0';
-      }
-      formikExplore.setFieldValue('explorebalance', exploreAddressBalance);
+      const exploreAddress = formikExplore.values.exploreAddress;
+      checkForAddressInStorage(exploreAddress);
+      const exploreWalletBalance = getAddressBalance(exploreAddress);
+      formikExplore.setFieldValue('exploreBalance', exploreWalletBalance);
+      formikExplore.setFieldValue('addressForTable', formikExplore.values.exploreAddress);
     }
   });
   return(
@@ -52,7 +54,7 @@ function Explore() {
       </AppBar>
       <main>
         <div>
-          <Container maxWidth="sm" className={classes.container}>
+          <Container maxWidth="md" className={classes.container}>
             <form onSubmit={formikExplore.handleSubmit}>
               <Grid
                 container
@@ -63,14 +65,14 @@ function Explore() {
               >
                 <Grid item>
                   <TextField 
-                    id="exploreaddress" 
+                    id="exploreAddress" 
                     label="Address to explore"
-                    name="exploreaddress" 
+                    name="exploreAddress" 
                     variant="outlined"
                     onChange={formikExplore.handleChange}
-                    value={formikExplore.values.exploreaddress}
-                    error={formikExplore.errors.exploreaddress}
-                    helperText={formikExplore.errors.exploreaddress}
+                    value={formikExplore.values.exploreAddress}
+                    error={formikExplore.errors.exploreAddress}
+                    helperText={formikExplore.errors.exploreAddress}
                     InputProps={{ className: classes.input }}
                   />
                 </Grid>
@@ -81,9 +83,14 @@ function Explore() {
                 </Grid>
               </Grid>
               <Typography variant="h6" color="textPrimary" align="center" className={classes.text}>
-                  Balance of this address is: {formikExplore.values.explorebalance}
+                  Balance of this address is: {formikExplore.values.exploreBalance}
               </Typography>
             </form>
+            <Grid item xs={12}>
+              <div>
+                {formikExplore.values.addressForTable && <TransferHistory addr={formikExplore.values.addressForTable}/>}
+              </div>
+            </Grid>
           </Container>
         </div>
       </main>
