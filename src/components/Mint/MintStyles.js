@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
     text: {
         marginBottom: '15px',
     },
+    minticon: {
+        marginRight:'10px',
+    },
 }));
 
 export default useStyles; 

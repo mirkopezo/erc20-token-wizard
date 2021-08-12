@@ -18,6 +18,9 @@
  *
  */
 
+
+ const path = require('path');
+ const provider = require('@truffle/hdwallet-provider');
 // const HDWalletProvider = require('@truffle/hdwallet-provider');
 // const infuraKey = "fj4jll3k.....";
 //
@@ -36,6 +39,7 @@ module.exports = {
    */
 
   networks: {
+    contracts_build_directory: path.join(__dirname,"../src/contracts"),
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
@@ -72,6 +76,14 @@ module.exports = {
     // network_id: 2111,   // This network is yours, in the cloud.
     // production: true    // Treats this network as if it was a public net. (default: false)
     // }
+    rinkeby: {
+      provider: () =>
+        new provider(
+          '7ecc33f85ba8354e324df3f650e30a7da67e4c68c2f7ebc4bb7e62657b76f844',
+          'wss://rinkeby.infura.io/ws/v3/8d65382602524ab5b4bc1adc3c346c61'
+        ),
+        network_id: "4",
+    }
   },
 
   // Set default mocha options here, use special reporters etc.

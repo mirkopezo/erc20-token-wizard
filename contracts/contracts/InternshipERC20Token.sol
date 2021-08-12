@@ -10,8 +10,7 @@ contract InternshipERC20Token is ERC20 {
         return 8;
     }
 
-    function mint(address to, uint amount) external {
-        require(msg.sender == to, 'You can only mint tokens to yourself');
-        _mint(to, amount);
+    function mint(uint amount) external {
+        _mint(msg.sender, amount);
     }
 }

@@ -1,22 +1,24 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import SignIn from 'pages/SignIn/SignIn';
 import Dashboard from 'pages/Dashboard/Dashboard';
 import Explore from 'pages/Explore/Explore';
 import AuthApi from 'components/AuthApi/AuthApi';
+import { useEthers } from '@usedapp/core';
 
 function App() {
   const [auth,setAuth] = React.useState(false);
-  const readCookie = () => {
-    const user = Cookies.get("wallet");
-    if(user) {
+  const { account } = useEthers();
+
+  const readWallet = () => {
+    if(account&&true === true) {
       setAuth(true);
     }
+    else setAuth(false);
   }
   React.useEffect(() => {
-    readCookie();
-  }, [])
+    readWallet();
+  },)
 
   return (
     <div>

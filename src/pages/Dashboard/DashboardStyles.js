@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
     icon: {
         marginRight: '10px',
     },
-    logout: {
+    walletanddisconnect: {
         marginLeft: 'auto',
     },
     buttons: {
@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
     },
     text: {
         marginBottom: '15px',
+    },
+    exploreicon: {
+        marginRight:'10px',
     },
 }));
 

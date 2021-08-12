@@ -13,12 +13,9 @@ contract('InternshipERC20Token', (accounts) => {
     });
     it('It should mint to transaction sender', async() => {
         const balanceBefore = await contract.balanceOf(accounts[0]);
-        await contract.mint(accounts[0], 100, {from: accounts[0]});
+        await contract.mint(100, {from: accounts[0]});
         const balanceAfter = await contract.balanceOf(accounts[0]);
         const diff = balanceAfter.sub(balanceBefore).toNumber();
         assert(diff === 100);
-    });
-    it('It shouldnt mint to address that is not transaction sender', async() => {
-        await expectRevert(contract.mint(accounts[0], 100, {from: accounts[1]}), 'You can only mint tokens to yourself');
     });
 });
