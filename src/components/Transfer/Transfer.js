@@ -21,7 +21,8 @@ function Alert(props) {
 
 function Transfer() {
     const classes = useStyles();
-    const [openSnack, setOpenSnack] = React.useState(false);
+    const [openInfoSnack, setOpenInfoSnack] = React.useState(false);
+    const [openSuccessSnack, setOpenSuccessSnack] = React.useState(false);
     const [openTransfer, setOpenTransfer] = React.useState(false);
     const [disabled, setDisabled] = React.useState(false);
 
@@ -31,14 +32,23 @@ function Transfer() {
     const contract = new Contract(citContractAddress, citInterface);
     const { send, state } = useContractFunction(contract, 'transfer', { transactionName: 'Transfer'});
 
-    const handleClickSnack = () => {
-        setOpenSnack(true);
+    const handleClickInfoSnack = () => {
+        setOpenInfoSnack(true);
     };
-    const handleCloseSnack = (event, reason) => {
+    const handleCloseInfoSnack = (event, reason) => {
         if (reason === 'clickaway') {
             return;
         }
-        setOpenSnack(false);
+        setOpenInfoSnack(false);
+    };
+    const handleClickSuccessSnack = () => {
+        setOpenSuccessSnack(true);
+      };
+    const handleCloseSuccessSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenSuccessSnack(false);
     };
     const handleClickOpenTransfer = () => {
         setOpenTransfer(true);
@@ -90,10 +100,16 @@ function Transfer() {
     });
     
     useEffect(() => {
-        if (state.status !== 'Mining') {
-          setDisabled(false);
+        if (state.status === 'Mining') {
+            handleClickInfoSnack();
         }
-        else handleClickSnack();
+        else if (state.status === 'Success') {
+            handleClickSuccessSnack();
+            setDisabled(false);
+        }
+        else {
+            setDisabled(false);
+        }
     }, [state])
     
     return(
@@ -155,9 +171,14 @@ function Transfer() {
                     </form>
                 </DialogContent>
             </Dialog>
-            <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
-                <Alert onClose={handleCloseSnack} severity="success">
-                    Transfer was successfully submitted!
+            <Snackbar open={openInfoSnack} autoHideDuration={6000} onClose={handleCloseInfoSnack}>
+                <Alert onClose={handleCloseInfoSnack} severity="info">
+                    Transfer transaction is submitted!
+                </Alert>
+            </Snackbar>
+            <Snackbar open={openSuccessSnack} autoHideDuration={6000} onClose={handleCloseSuccessSnack}>
+                <Alert onClose={handleCloseSuccessSnack} severity="success">
+                    Transfer was successfully executed!
                 </Alert>
             </Snackbar>
         </>

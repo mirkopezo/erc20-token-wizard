@@ -20,7 +20,8 @@ function Alert(props) {
 
 function Mint() {
   const classes = useStyles();
-  const [openSnack, setOpenSnack] = React.useState(false);
+  const [openInfoSnack, setOpenInfoSnack] = React.useState(false);
+  const [openSuccessSnack, setOpenSuccessSnack] = React.useState(false);
   const [openMint, setOpenMint] = React.useState(false);
   const [disabled, setDisabled] = React.useState(false);
 
@@ -30,14 +31,23 @@ function Mint() {
   const contract = new Contract(citContractAddress, citInterface);
   const { send, state } = useContractFunction(contract, 'mint', { transactionName: 'Mint'});
 
-  const handleClickSnack = () => {
-    setOpenSnack(true);
+  const handleClickInfoSnack = () => {
+    setOpenInfoSnack(true);
   };
-  const handleCloseSnack = (event, reason) => {
+  const handleCloseInfoSnack = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    setOpenSnack(false);
+    setOpenInfoSnack(false);
+  };
+  const handleClickSuccessSnack = () => {
+    setOpenSuccessSnack(true);
+  };
+  const handleCloseSuccessSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSuccessSnack(false);
   };
   const handleClickOpenMint = () => {
     setOpenMint(true);
@@ -79,10 +89,16 @@ function Mint() {
   });
 
   useEffect(() => {
-    if (state.status !== 'Mining') {
+    if (state.status === 'Mining') {
+      handleClickInfoSnack();
+    }
+    else if (state.status === 'Success') {
+      handleClickSuccessSnack();
       setDisabled(false);
     }
-    else handleClickSnack();
+    else {
+      setDisabled(false);
+    }
   }, [state])
 
   return(
@@ -130,9 +146,14 @@ function Mint() {
           </form>
         </DialogContent>
       </Dialog>
-      <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
-        <Alert onClose={handleCloseSnack} severity="success">
-          Mint was successfully submitted!
+      <Snackbar open={openInfoSnack} autoHideDuration={6000} onClose={handleCloseInfoSnack}>
+        <Alert onClose={handleCloseInfoSnack} severity="info">
+          Mint transaction is submitted!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openSuccessSnack} autoHideDuration={6000} onClose={handleCloseSuccessSnack}>
+        <Alert onClose={handleCloseSuccessSnack} severity="success">
+          Mint was successfully executed!
         </Alert>
       </Snackbar>
     </>
