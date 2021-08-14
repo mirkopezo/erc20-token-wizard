@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
-import Cookies from 'js-cookie';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { Typography, Grid } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
+import GavelOutlinedIcon from '@material-ui/icons/GavelOutlined';
 import useStyles from 'components/Mint/MintStyles';
 import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import { inputTransaction } from 'lib/inputTransaction';
-import { getAddressBalance } from 'lib/getAddressBalance';
+import { utils } from 'ethers';
+import { Contract } from '@ethersproject/contracts'
+import { useContractFunction, useEthers } from '@usedapp/core';
+import ReadBalance from 'components/ReadBalance/ReadBalance';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -18,8 +20,16 @@ function Alert(props) {
 
 function Mint() {
   const classes = useStyles();
-
   const [openSnack, setOpenSnack] = React.useState(false);
+  const [openMint, setOpenMint] = React.useState(false);
+  const [disabled, setDisabled] = React.useState(false);
+
+  const { account } = useEthers();
+  const citInterface = new utils.Interface(['function mint(uint amount) external']);
+  const citContractAddress = '0xd2539E040A79D9597310D96aD17C96518168A63F';
+  const contract = new Contract(citContractAddress, citInterface);
+  const { send, state } = useContractFunction(contract, 'mint', { transactionName: 'Mint'});
+
   const handleClickSnack = () => {
     setOpenSnack(true);
   };
@@ -29,20 +39,20 @@ function Mint() {
     }
     setOpenSnack(false);
   };
-
-  const [openMint, setOpenMint] = React.useState(false);
   const handleClickOpenMint = () => {
     setOpenMint(true);
   };
   const handleCloseMint = () => {
     setOpenMint(false);
   };
+  const callMint = (mintAmount) => {
+    send(mintAmount*10**8);
+  }
 
   const formikMint = useFormik({
     enableReinitialize: true,
     initialValues: {
       mintValue: '',
-      balance: JSON.parse(localStorage.getItem(Cookies.get("wallet"))) === null ? '' : JSON.parse(localStorage.getItem(Cookies.get("wallet"))).balance,
     },
     validate: values => {
       const errors = {};
@@ -62,18 +72,23 @@ function Mint() {
       return errors;
     },
     onSubmit: values => {
-      const walletAddress = Cookies.get("wallet");
       const mintValue = formikMint.values.mintValue;
-      inputTransaction('null', walletAddress, mintValue);
-      const newBalance = getAddressBalance(walletAddress);
-      formikMint.setFieldValue('balance', newBalance);
-      handleClickSnack();
+      setDisabled(true);
+      callMint(mintValue);
     }
   });
+
+  useEffect(() => {
+    if (state.status !== 'Mining') {
+      setDisabled(false);
+    }
+    else handleClickSnack();
+  }, [state])
 
   return(
     <>
       <Button variant="contained" color="primary" onClick={handleClickOpenMint} size="large">
+        <GavelOutlinedIcon className={classes.minticon} />
         Mint
       </Button>
       <Dialog onClose={handleCloseMint} open={openMint}>
@@ -82,7 +97,7 @@ function Mint() {
         </DialogTitle>
         <DialogContent dividers>
           <Typography variant="h6" color="textPrimary" className={classes.text}>
-          Wallet balance: {formikMint.values.balance}
+            Wallet balance: <ReadBalance address={account} />
           </Typography>
           <form onSubmit={formikMint.handleSubmit}>
             <Grid
@@ -103,10 +118,11 @@ function Mint() {
                   error={formikMint.errors.mintValue}
                   helperText={formikMint.errors.mintValue}
                   InputProps={{ className: classes.input }}
+                  disabled={disabled}
                 />
               </Grid>
               <Grid item>
-                <Button type="submit" variant="contained" color="secondary" className={classes.button}>
+                <Button type="submit" variant="contained" color="secondary" disabled={!account || disabled} className={classes.button}>
                   Mint
                 </Button>
               </Grid>
@@ -116,7 +132,7 @@ function Mint() {
       </Dialog>
       <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
         <Alert onClose={handleCloseSnack} severity="success">
-          Mint was successfully executed!
+          Mint was successfully submitted!
         </Alert>
       </Snackbar>
     </>

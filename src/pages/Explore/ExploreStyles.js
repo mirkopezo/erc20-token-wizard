@@ -29,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
         overflow: 'auto',
         flexDirection: 'column',
     },
+    walletanddisconnect: {
+        marginLeft: 'auto',
+    },
 }));
 
 export default useStyles;

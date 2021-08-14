@@ -4,17 +4,19 @@ import Button from '@material-ui/core/Button';
 import { Typography, AppBar, CssBaseline, Grid, 
   Toolbar, Container } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
+import DisconnectButton from 'components/DisconnectButton/DisconnectButton';
+import WalletModal from 'components/WalletModal/WalletModal';
 import { Link } from "react-router-dom";
 import { useFormik } from 'formik';
+import AuthApi from 'components/AuthApi/AuthApi';
 import Web3 from 'web3';
 import SearchIcon from '@material-ui/icons/Search';
 import useStyles from 'pages/Explore/ExploreStyles';
-import TransferHistory from 'components/TransferHistory/TransferHistory';
-import { checkForAddressInStorage } from 'lib/checkForAddressInStorage';
-import { getAddressBalance } from 'lib/getAddressBalance';
+import ReadBalance from 'components/ReadBalance/ReadBalance';
 
 function Explore() {
   const classes = useStyles();
+  const Auth = React.useContext(AuthApi);
 
   const formikExplore = useFormik({
     enableReinitialize: true,
@@ -35,12 +37,11 @@ function Explore() {
     },
     onSubmit: values => {
       const exploreAddress = formikExplore.values.exploreAddress;
-      checkForAddressInStorage(exploreAddress);
-      const exploreWalletBalance = getAddressBalance(exploreAddress);
-      formikExplore.setFieldValue('exploreBalance', exploreWalletBalance);
-      formikExplore.setFieldValue('addressForTable', formikExplore.values.exploreAddress);
+      formikExplore.setFieldValue('exploreBalance', '');
+      formikExplore.setFieldValue('addressForTable', exploreAddress);
     }
   });
+
   return(
     <>
       <CssBaseline />
@@ -50,6 +51,10 @@ function Explore() {
           <Typography variant="h6">
             Explore
           </Typography>
+          <div className={classes.walletanddisconnect} >
+            <WalletModal />
+            <DisconnectButton auth={Auth} />
+          </div>
         </Toolbar>
       </AppBar>
       <main>
@@ -83,14 +88,9 @@ function Explore() {
                 </Grid>
               </Grid>
               <Typography variant="h6" color="textPrimary" align="center" className={classes.text}>
-                  Balance of this address is: {formikExplore.values.exploreBalance}
+                  {formikExplore.values.addressForTable && <ReadBalance address={formikExplore.values.addressForTable} text={'Balance of this address is: '}/>}
               </Typography>
             </form>
-            <Grid item xs={12}>
-              <div>
-                {formikExplore.values.addressForTable && <TransferHistory addr={formikExplore.values.addressForTable}/>}
-              </div>
-            </Grid>
           </Container>
         </div>
       </main>

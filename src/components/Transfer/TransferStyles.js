@@ -13,6 +13,12 @@ const useStyles = makeStyles((theme) => ({
     input: {
         height: 54,
     },
+    text: {
+        marginBottom: '15px',
+    },
+    transfericon: {
+        marginRight:'10px',
+    },
 }));
 
 export default useStyles; 
