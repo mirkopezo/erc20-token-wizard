@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IconButton, Tooltip, Typography, Link } from '@material-ui/core';
 import AccountBalanceWalletOutlinedIcon from '@material-ui/icons/AccountBalanceWalletOutlined';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import LinkOutlinedIcon from '@material-ui/icons/LinkOutlined';
-import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
-import Dialog from '@material-ui/core/Dialog';
-import { useEthers, getExplorerAddressLink } from '@usedapp/core';
 import Grid from '@material-ui/core/Grid';
+import Snackbar from '@material-ui/core/Snackbar';
+import Dialog from '@material-ui/core/Dialog';
+import useStyles from 'components/WalletModal/WalletModalStyle';
+import { useEthers, getExplorerAddressLink } from '@usedapp/core';
+import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
 
 function WalletModal() {
-    const [openMint, setOpenMint] = React.useState(false);
+    const classes = useStyles();
+    const [openMint, setOpenMint] = useState(false);
+    const [openSnack, setOpenSnack] = useState(false);
     const { account, chainId } = useEthers();
 
     const handleClickOpenMint = () => {
@@ -17,18 +21,29 @@ function WalletModal() {
     };
     const handleCloseMint = () => {
         setOpenMint(false);
+        handleCloseSnack();
+    };
+    const handleClickSnack = (address) => {
+        setOpenSnack(true);
+        navigator.clipboard.writeText(address);
+      };
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenSnack(false);
     };
 
     return(
         <>
             <Tooltip title="Wallet">
                 <IconButton onClick={handleClickOpenMint} >
-                    <AccountBalanceWalletOutlinedIcon fontSize='large' style={{fill: 'white'}} />
+                    <AccountBalanceWalletOutlinedIcon fontSize='large' className={classes.icon} />
                 </IconButton>
             </Tooltip>
             <Dialog onClose={handleCloseMint} open={openMint} maxWidth="md">
                 <DialogTitle onClose={handleCloseMint} align="center" >
-                    Account info
+                    Wallet info
                 </DialogTitle>
                 <DialogContent dividers>
                     <Typography variant='h6' gutterBottom>
@@ -43,19 +58,20 @@ function WalletModal() {
                         <Typography variant='subtitle2' gutterBottom>
                             <Link href={getExplorerAddressLink(account, chainId)} target="_blank" rel="noopener noreferrer" >
                                 Show on Etherscan
+                                <LinkOutlinedIcon fontSize='small' />
                             </Link>
-                            <LinkOutlinedIcon fontSize='small' />
                         </Typography>
                         {window.isSecureContext && (
                         <Typography variant='subtitle2' gutterBottom >
-                            <Link onClick={() => navigator.clipboard.writeText(account)} style={{cursor:'pointer'}} >
+                            <Link onClick={() => handleClickSnack(account)} className={classes.copybutton} >
                                 Copy to clipboard
+                                <FileCopyOutlinedIcon fontSize='small' />
                             </Link>
-                            <FileCopyOutlinedIcon fontSize='small' />
                         </Typography>
                         )}
                     </Grid>
                 </DialogContent>
+                <Snackbar open={openSnack} autoHideDuration={2000} onClose={handleCloseSnack} message="Copied to clipboard" />
             </Dialog>
         </>
     );

@@ -3,7 +3,7 @@ pragma solidity ^0.8.5;
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 
 contract InternshipERC20Token is ERC20 {
-    event newERC20Contract(address contractAddress);
+    address public lastContractAddress;
     
     constructor() ERC20('Crypto Internship Token', 'CIT') {
     }
@@ -16,10 +16,9 @@ contract InternshipERC20Token is ERC20 {
         _mint(msg.sender, amount);
     }
 	
-	function newERC20Token(string memory name, string memory symbol, uint initialSupply) public returns(address newContract) {
+	function newERC20Token(string memory name, string memory symbol, uint initialSupply) external {
 		ERC20Token c = (new ERC20Token)(name, symbol, initialSupply, msg.sender);
-		emit newERC20Contract(address(c));
-		return address(c);
+        lastContractAddress = address(c);
 	}
 }
 
@@ -36,6 +35,7 @@ contract ERC20Token is ERC20 {
     }
     
     function mint(uint amount) external {
+        require(msg.sender == creator, 'Mint is allowed only to the creator of token');
         _mint(msg.sender, amount);
     }
 }
