@@ -67,7 +67,7 @@ function PickTokenDialog(props) {
                 <Grid item>
                   <ListItem button onClick={() => handleListItemClick(defaultTokenSymbol, defaultToken)} key={defaultToken} className={classes.token} divider>
                     <ListItemAvatar>
-                      <Avatar alt={defaultTokenSymbol} src='.' className={classes.avatar} />
+                      <Avatar alt={defaultTokenSymbol} src='.' style={{color: '#fff', backgroundColor: '#303f9f'}} />
                     </ListItemAvatar>
                     <ListItemText primary={defaultTokenSymbol} />
                   </ListItem>
@@ -91,7 +91,7 @@ function PickTokenDialog(props) {
                     <Grid item>
                       <ListItem button onClick={() => handleListItemClick(symbol, contract)} key={contract} className={classes.token} divider>
                         <ListItemAvatar>
-                          <Avatar alt={symbol} src='.' className={classes.avatar} />
+                          <Avatar alt={symbol} src='.' style={{color: '#fff', backgroundColor: '#303f9f'}} />
                         </ListItemAvatar>
                         <ListItemText primary={symbol} />
                       </ListItem>
