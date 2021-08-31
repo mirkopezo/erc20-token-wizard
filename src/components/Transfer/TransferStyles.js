@@ -14,11 +14,14 @@ const useStyles = makeStyles((theme) => ({
         height: 54,
     },
     text: {
-        marginBottom: '15px',
+        marginBottom: '25px',
     },
     transfericon: {
         marginRight:'10px',
     },
+    dialogcontent: {
+        padding: theme.spacing(4, 5, 4),
+    }
 }));
 
 export default useStyles; 

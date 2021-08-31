@@ -1,34 +1,32 @@
-import React, { useEffect } from 'react';
-import { useFormik } from 'formik';
+import React, { useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { Typography, Grid } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import GavelOutlinedIcon from '@material-ui/icons/GavelOutlined';
-import useStyles from 'components/Mint/MintStyles';
-import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
 import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { useFormik } from 'formik';
 import { utils } from 'ethers';
 import { Contract } from '@ethersproject/contracts'
 import { useContractFunction, useEthers } from '@usedapp/core';
+import useStyles from 'components/Mint/MintStyles';
+import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
 import ReadBalance from 'components/ReadBalance/ReadBalance';
+import Alert from 'components/Alert/Alert';
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
-function Mint() {
+function Mint(props) {
   const classes = useStyles();
-  const [openInfoSnack, setOpenInfoSnack] = React.useState(false);
-  const [openSuccessSnack, setOpenSuccessSnack] = React.useState(false);
-  const [openMint, setOpenMint] = React.useState(false);
-  const [disabled, setDisabled] = React.useState(false);
+  const [openInfoSnack, setOpenInfoSnack] = useState(false);
+  const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
+  const [openMint, setOpenMint] = useState(false);
+  const [disabledInput, setDisabledInput] = useState(false);
 
   const { account } = useEthers();
-  const citInterface = new utils.Interface(['function mint(uint amount) external']);
-  const citContractAddress = '0xd2539E040A79D9597310D96aD17C96518168A63F';
-  const contract = new Contract(citContractAddress, citInterface);
+  const { pickedToken, pickedTokenSymbol } = props;
+  const tokenInterface = new utils.Interface(['function mint(uint amount) external']);
+  const tokenContractAddress = pickedToken;
+  const contract = new Contract(tokenContractAddress, tokenInterface);
   const { send, state } = useContractFunction(contract, 'mint', { transactionName: 'Mint'});
 
   const handleClickInfoSnack = () => {
@@ -83,7 +81,7 @@ function Mint() {
     },
     onSubmit: values => {
       const mintValue = formikMint.values.mintValue;
-      setDisabled(true);
+      setDisabledInput(true);
       callMint(mintValue);
     }
   });
@@ -94,10 +92,10 @@ function Mint() {
     }
     else if (state.status === 'Success') {
       handleClickSuccessSnack();
-      setDisabled(false);
+      setDisabledInput(false);
     }
     else {
-      setDisabled(false);
+      setDisabledInput(false);
     }
   }, [state])
 
@@ -107,15 +105,15 @@ function Mint() {
         <GavelOutlinedIcon className={classes.minticon} />
         Mint
       </Button>
-      <Dialog onClose={handleCloseMint} open={openMint}>
+      <Dialog onClose={handleCloseMint} open={openMint} >
         <DialogTitle onClose={handleCloseMint} align="center">
           Mint
         </DialogTitle>
-        <DialogContent dividers>
+        <DialogContent dividers className={classes.dialogcontent}>
           <Typography variant="h6" color="textPrimary" className={classes.text}>
-            Wallet balance: <ReadBalance address={account} />
+            Wallet balance: <ReadBalance address={account} pickedToken={pickedToken} pickedTokenSymbol={pickedTokenSymbol} />
           </Typography>
-          <form onSubmit={formikMint.handleSubmit}>
+          <form onSubmit={formikMint.handleSubmit}  >
             <Grid
               container
               direction="row"
@@ -134,12 +132,13 @@ function Mint() {
                   error={formikMint.errors.mintValue}
                   helperText={formikMint.errors.mintValue}
                   InputProps={{ className: classes.input }}
-                  disabled={disabled}
+                  disabled={disabledInput}
                 />
               </Grid>
               <Grid item>
-                <Button type="submit" variant="contained" color="secondary" disabled={!account || disabled} className={classes.button}>
-                  Mint
+                <Button type="submit" variant="contained" color="secondary" disabled={!account || disabledInput} className={classes.button}>
+                  {disabledInput !== true ? <>Mint</> :
+									<CircularProgress color='inherit' />}
                 </Button>
               </Grid>
             </Grid>

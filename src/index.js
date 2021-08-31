@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from 'App';
 import { DAppProvider, ChainId } from '@usedapp/core';
+import  { BreakpointProvider } from 'react-socks';
 
 const config = {
     readOnlyChainId: ChainId.Rinkeby,
@@ -11,8 +12,10 @@ const config = {
   }
 
 ReactDOM.render(
-    <DAppProvider config={config}>
-        <App />
-    </DAppProvider>, 
+    <BreakpointProvider>
+      <DAppProvider config={config}>
+          <App />
+      </DAppProvider>
+    </BreakpointProvider>, 
     document.getElementById('root')
 );

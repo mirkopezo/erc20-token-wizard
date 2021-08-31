@@ -7,12 +7,6 @@ const useStyles = makeStyles((theme) => ({
     icon: {
         marginRight: '10px',
     },
-    walletanddisconnect: {
-        marginLeft: 'auto',
-    },
-    input: {
-        height: 54,
-    },
     button: {
         background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
         border: 0,
@@ -21,9 +15,19 @@ const useStyles = makeStyles((theme) => ({
         color: 'white',
         padding: '0 30px',
         height: 54,
+        width: 210,
     },
-    table: {
-        padding: theme.spacing(8, 1, 5),
+    input: {
+        height: 54,
+        width: 210,
+    },
+    walletanddisconnect: {
+        marginLeft: 'auto',
+    },
+    backbutton: {
+        width: 210,
+        marginTop: '25px',
+        marginBottom: '50px',
     },
     form: {
         padding: theme.spacing(3, 0, 0),

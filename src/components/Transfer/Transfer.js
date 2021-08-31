@@ -1,35 +1,33 @@
-import React, { useEffect } from 'react';
-import { useFormik } from 'formik';
+import React, { useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { Typography, Grid } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
-import useStyles from 'components/Transfer/TransferStyles';
-import Web3 from 'web3';
 import SyncAltOutlinedIcon from '@material-ui/icons/SyncAltOutlined';
-import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
 import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { useFormik } from 'formik';
 import { utils } from 'ethers';
 import { Contract } from '@ethersproject/contracts'
 import { useContractFunction, useEthers } from '@usedapp/core';
+import Web3 from 'web3';
+import useStyles from 'components/Transfer/TransferStyles';
+import { DialogTitle, DialogContent } from 'components/DialogTitleContent/DialogTitleContent';
 import ReadBalance from 'components/ReadBalance/ReadBalance';
+import Alert from 'components/Alert/Alert';
 
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
-function Transfer() {
+function Transfer(props) {
     const classes = useStyles();
-    const [openInfoSnack, setOpenInfoSnack] = React.useState(false);
-    const [openSuccessSnack, setOpenSuccessSnack] = React.useState(false);
-    const [openTransfer, setOpenTransfer] = React.useState(false);
-    const [disabled, setDisabled] = React.useState(false);
+    const [openInfoSnack, setOpenInfoSnack] = useState(false);
+    const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
+    const [openTransfer, setOpenTransfer] = useState(false);
+    const [disabledInput, setDisabledInput] = useState(false);
 
     const { account } = useEthers();
-    const citInterface = new utils.Interface(['function transfer(address recipient, uint256 amount) public virtual override returns (bool)']);
-    const citContractAddress = '0xd2539E040A79D9597310D96aD17C96518168A63F';
-    const contract = new Contract(citContractAddress, citInterface);
+    const tokenInterface = new utils.Interface(['function transfer(address recipient, uint256 amount) public returns (bool)']);
+    const tokenContractAddress = props.pickedToken;
+    const tokenSymbol = props.pickedTokenSymbol;
+    const contract = new Contract(tokenContractAddress, tokenInterface);
     const { send, state } = useContractFunction(contract, 'transfer', { transactionName: 'Transfer'});
 
     const handleClickInfoSnack = () => {
@@ -92,10 +90,10 @@ function Transfer() {
         return errors;
         },
         onSubmit: values => {
-        const recipientAddress = formikTransfer.values.transferAddress;
-        const transferValue = formikTransfer.values.transferValue;
-        setDisabled(true);
-        CallTransfer(recipientAddress, transferValue*10**8);
+            const recipientAddress = formikTransfer.values.transferAddress;
+            const transferValue = formikTransfer.values.transferValue;
+            setDisabledInput(true);
+            CallTransfer(recipientAddress, transferValue*10**8);
         }
     });
     
@@ -105,10 +103,10 @@ function Transfer() {
         }
         else if (state.status === 'Success') {
             handleClickSuccessSnack();
-            setDisabled(false);
+            setDisabledInput(false);
         }
         else {
-            setDisabled(false);
+            setDisabledInput(false);
         }
     }, [state])
     
@@ -122,11 +120,11 @@ function Transfer() {
                 <DialogTitle onClose={handleCloseTransfer} align="center">
                     Transfer
                 </DialogTitle>
-                <DialogContent dividers>
+                <DialogContent dividers className={classes.dialogcontent}>
                     <Typography variant="h6" color="textPrimary" className={classes.text}>
-                        Wallet balance: <ReadBalance address={account} />
+                        Wallet balance: <ReadBalance address={account} pickedToken={tokenContractAddress} pickedTokenSymbol={tokenSymbol} />
                     </Typography>
-                    <form onSubmit={formikTransfer.handleSubmit}>
+                    <form onSubmit={formikTransfer.handleSubmit} >
                         <Grid
                             container
                             direction="row"
@@ -145,7 +143,7 @@ function Transfer() {
                                     error={formikTransfer.errors.transferAddress}
                                     helperText={formikTransfer.errors.transferAddress}
                                     InputProps={{ className: classes.input }}
-                                    disabled={disabled}
+                                    disabled={disabledInput}
                                 />
                             </Grid>
                             <Grid item>
@@ -159,12 +157,13 @@ function Transfer() {
                                     error={formikTransfer.errors.transferValue}
                                     helperText={formikTransfer.errors.transferValue}
                                     InputProps={{ className: classes.input }}
-                                    disabled={disabled}
+                                    disabled={disabledInput}
                                 />
                             </Grid>
                             <Grid item>
-                                <Button type="submit" variant="contained" color="secondary" disabled={!account || disabled} className={classes.button}>
-                                    Transfer
+                                <Button type="submit" variant="contained" color="secondary" disabled={!account || disabledInput} className={classes.button}>
+                                    {disabledInput !== true ? <>Transfer</> :
+									<CircularProgress color='inherit' />}
                                 </Button>
                             </Grid>
                         </Grid>

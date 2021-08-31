@@ -20,7 +20,9 @@
 
 
  const path = require('path');
+ const fs = require('fs');
  const provider = require('@truffle/hdwallet-provider');
+ const secrets = JSON.parse(fs.readFileSync('.secrets.json').toString().trim());
 // const HDWalletProvider = require('@truffle/hdwallet-provider');
 // const infuraKey = "fj4jll3k.....";
 //
@@ -79,7 +81,7 @@ module.exports = {
     rinkeby: {
       provider: () =>
         new provider(
-          '7ecc33f85ba8354e324df3f650e30a7da67e4c68c2f7ebc4bb7e62657b76f844',
+          secrets.privateKeys,
           'wss://rinkeby.infura.io/ws/v3/8d65382602524ab5b4bc1adc3c346c61'
         ),
         network_id: "4",
