@@ -39,6 +39,7 @@ function CreateToken(props) {
 	const Auth = React.useContext(AuthApi);
 	const [openInfoSnack, setOpenInfoSnack] = useState(false);
   	const [disabledInput, setDisabledInput] = useState(false);
+	const [transactionSuccess, setTransactionSuccess] = useState(false);
 	const history = useHistory();
 	const { setPickedToken, setPickedTokenSymbol } = props;
 	const lastTokenAddress = GetLastTokenAddress();
@@ -57,6 +58,9 @@ function CreateToken(props) {
 		  return;
 		}
 		setOpenInfoSnack(false);
+	};
+	const handleTransactionSuccess = () => {
+		setTransactionSuccess(true);
 	};
 	const callCreateToken = (name, symbol, supply) => {
 		send(name, symbol, supply*10**8);
@@ -104,10 +108,12 @@ function CreateToken(props) {
 
 	useEffect(() => {
 		if (state.status === 'Mining') {
-		  handleClickInfoSnack();
+			if(transactionSuccess === false)
+				handleClickInfoSnack();
 		}
 		else if (state.status === 'Success') {
-			const delayInMilliseconds = 500;
+			handleTransactionSuccess();
+			const delayInMilliseconds = 1000;
 			setTimeout(function() {
 				setDisabledInput(false);
 				if (lastTokenAddress != null) {
