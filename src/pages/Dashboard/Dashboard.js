@@ -42,7 +42,7 @@ function Dashboard(props) {
         <div>
           <Container maxWidth="md" className={classes.container}>
             <Typography variant="h3" align="center" color="textPrimary" gutterBottom>
-              Blockchain explorer
+              ERC20 Token Wizard
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
               Pick one of 4 options
