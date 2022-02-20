@@ -14,12 +14,14 @@
   <img src="https://i.ibb.co/RYxMvYg/ERC20-TOKEN-WIZARD-INTERFACE.png" />
 </p>
 
+![interface](https://s10.gifyu.com/images/erc-20-token-wizard.gif)
+
 ## Features
 
   - [X] Create ERC20 tokens
   - [X] Mint tokens
   - [X] Transfer tokens
-  - [X] Explore token holder balances
+  - [X] Explore token balances
 
 ## Setup
 
