@@ -10,11 +10,9 @@
   Easily create new ERC20 tokens and manage them in a simple interface.
 </p>
 
-<p align="center">
-  <img src="https://i.ibb.co/RYxMvYg/ERC20-TOKEN-WIZARD-INTERFACE.png" />
-</p>
+<br />
 
-![interface](https://s10.gifyu.com/images/erc-20-token-wizard.gif)
+![erc 20 token wizard](https://user-images.githubusercontent.com/24723870/154850115-dac1b0ae-8316-4ee9-8778-b9e0a18ae3a5.gif)
 
 ## Features
 
